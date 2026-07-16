@@ -1,7 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { FileText, Github, Linkedin, Menu, X } from "lucide-react";
+import { FileText, Menu, X } from "lucide-react";
+import { FaGithub, FaLinkedin } from "react-icons/fa6";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
@@ -154,7 +155,7 @@ export function Navigation() {
                   rel="noreferrer"
                   target="_blank"
                 >
-                  <Github aria-hidden="true" size={18} />
+                  <FaGithub aria-hidden="true" size={18} />
                 </a>
               ) : null}
               {linkedin ? (
@@ -165,7 +166,7 @@ export function Navigation() {
                   rel="noreferrer"
                   target="_blank"
                 >
-                  <Linkedin aria-hidden="true" size={18} />
+                  <FaLinkedin aria-hidden="true" size={18} />
                 </a>
               ) : null}
               <a
@@ -258,7 +259,7 @@ export function Navigation() {
                       rel="noreferrer"
                       target="_blank"
                     >
-                      <Github aria-hidden="true" size={18} />
+                      <FaGithub aria-hidden="true" size={18} />
                     </a>
                   ) : null}
                   {linkedin ? (
@@ -269,7 +270,7 @@ export function Navigation() {
                       rel="noreferrer"
                       target="_blank"
                     >
-                      <Linkedin aria-hidden="true" size={18} />
+                      <FaLinkedin aria-hidden="true" size={18} />
                     </a>
                   ) : null}
                   <a

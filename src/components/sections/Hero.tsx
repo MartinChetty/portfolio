@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowRight, Github, Linkedin } from "lucide-react";
+import { ArrowRight} from "lucide-react";
+import { FaGithub, FaLinkedin } from "react-icons/fa6";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 
@@ -9,8 +10,8 @@ import { profile } from "@/content/profile";
 import { socials } from "@/content/socials";
 
 const socialIcons = {
-  github: Github,
-  linkedin: Linkedin,
+  github: FaGithub,
+  linkedin: FaLinkedin,
 };
 
 const credentialHighlights = ["Java", "Python", "CCNA", "Generative AI", "Network Automation"];
