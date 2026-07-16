@@ -1,16 +1,33 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { FileText, Github, Linkedin, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { navigationItems } from "@/content/navigation";
-import { profile } from "@/content/profile";
+import { socials } from "@/content/socials";
 
 import { ScrollProgress } from "./ScrollProgress";
 import { ThemeToggle } from "./ThemeToggle";
 import { useActiveSection } from "./useActiveSection";
+
+const github = socials.find((social) => social.platform === "github");
+const linkedin = socials.find((social) => social.platform === "linkedin");
+const navigationLinkBaseClassName =
+  "rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--canvas)]";
+const iconLinkClassName =
+  "inline-flex size-10 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-subtle)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--canvas)]";
+
+function navigationLinkClassName(isActive: boolean, isMobile = false) {
+  const stateClassName = isActive
+    ? "bg-[var(--brand-subtle)] text-[var(--brand-strong)]"
+    : "text-[var(--text-muted)] hover:bg-[var(--surface-subtle)] hover:text-[var(--text)]";
+  const sizeClassName = isMobile ? "block px-4 py-4 text-2xl sm:text-3xl" : "px-3 py-2 text-sm";
+
+  return `${navigationLinkBaseClassName} ${sizeClassName} ${stateClassName}`;
+}
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -101,11 +118,12 @@ export function Navigation() {
       >
         <Container className="flex min-h-16 items-center justify-between gap-3" size="wide">
           <a
-            className="shrink-0 text-base font-semibold text-[var(--text)] transition-colors hover:text-[var(--brand)]"
+            aria-label="Martin Chetty, back to top"
+            className="inline-flex size-10 shrink-0 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--surface)] text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--brand)] hover:text-[var(--brand)]"
             href="#main-content"
             onClick={closeMenu}
           >
-            {profile.name}
+            MC
           </a>
 
           <nav aria-label="Primary navigation" className="hidden items-center gap-1 lg:flex">
@@ -116,11 +134,7 @@ export function Navigation() {
               return (
                 <a
                   aria-current={isActive ? "location" : undefined}
-                  className={`rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--canvas)] ${
-                    isActive
-                      ? "bg-[var(--brand-subtle)] text-[var(--brand-strong)]"
-                      : "text-[var(--text-muted)] hover:bg-[var(--surface-subtle)] hover:text-[var(--text)]"
-                  }`}
+                  className={navigationLinkClassName(isActive)}
                   href={item.href}
                   key={item.href}
                 >
@@ -131,6 +145,38 @@ export function Navigation() {
           </nav>
 
           <div className="flex items-center gap-1">
+            <div className="hidden items-center gap-1 lg:flex">
+              {github ? (
+                <a
+                  aria-label="GitHub profile (opens in a new tab)"
+                  className={iconLinkClassName}
+                  href={github.href}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <Github aria-hidden="true" size={18} />
+                </a>
+              ) : null}
+              {linkedin ? (
+                <a
+                  aria-label="LinkedIn profile (opens in a new tab)"
+                  className={iconLinkClassName}
+                  href={linkedin.href}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <Linkedin aria-hidden="true" size={18} />
+                </a>
+              ) : null}
+              <a
+                aria-label="Download resume PDF"
+                className={iconLinkClassName}
+                download
+                href="/documents/resume.pdf"
+              >
+                <FileText aria-hidden="true" size={18} />
+              </a>
+            </div>
             <ThemeToggle />
             <button
               aria-controls="mobile-navigation"
@@ -145,7 +191,6 @@ export function Navigation() {
             </button>
           </div>
         </Container>
-
       </header>
       <AnimatePresence>
         {isMenuOpen ? (
@@ -153,7 +198,7 @@ export function Navigation() {
             animate={{ opacity: 1 }}
             aria-label="Mobile navigation"
             aria-modal="true"
-            className="fixed inset-0 z-40 bg-[color-mix(in_srgb,var(--canvas)_94%,transparent)] px-5 pt-24 backdrop-blur-xl lg:hidden sm:px-6"
+            className="fixed inset-0 z-[65] bg-[color-mix(in_srgb,var(--canvas)_94%,transparent)] backdrop-blur-xl lg:hidden"
             exit={{ opacity: 0 }}
             id="mobile-navigation"
             initial={reduceMotion ? false : { opacity: 0 }}
@@ -161,40 +206,83 @@ export function Navigation() {
             role="dialog"
             transition={{ duration: reduceMotion ? 0 : 0.2, ease: "easeOut" }}
           >
-            <nav aria-label="Mobile navigation" className="mx-auto flex h-full max-w-7xl items-center">
-              <ul className="grid w-full gap-2">
-                {navigationItems.map((item, index) => {
-                  const sectionId = item.href.slice(1);
-                  const isActive = activeSection === sectionId;
+            <Container className="relative flex h-full items-center" size="wide">
+              <Button
+                aria-label="Close navigation menu"
+                className="absolute right-5 top-3 size-10 min-h-0 p-0 sm:right-6 lg:right-8"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  menuButtonRef.current?.focus();
+                }}
+                variant="ghost"
+              >
+                <X aria-hidden="true" size={20} />
+              </Button>
+              <div className="w-full">
+                <nav aria-label="Mobile navigation">
+                  <ul className="grid gap-2">
+                    {navigationItems.map((item, index) => {
+                      const sectionId = item.href.slice(1);
+                      const isActive = activeSection === sectionId;
 
-                  return (
-                    <motion.li
-                      animate={{ opacity: 1, x: 0 }}
-                      initial={reduceMotion ? false : { opacity: 0, x: -12 }}
-                      key={item.href}
-                      transition={{
-                        delay: reduceMotion ? 0 : 0.04 * index,
-                        duration: reduceMotion ? 0 : 0.2,
-                        ease: "easeOut",
-                      }}
+                      return (
+                        <motion.li
+                          animate={{ opacity: 1, x: 0 }}
+                          initial={reduceMotion ? false : { opacity: 0, x: -12 }}
+                          key={item.href}
+                          transition={{
+                            delay: reduceMotion ? 0 : 0.04 * index,
+                            duration: reduceMotion ? 0 : 0.2,
+                            ease: "easeOut",
+                          }}
+                        >
+                          <a
+                            aria-current={isActive ? "location" : undefined}
+                            className={navigationLinkClassName(isActive, true)}
+                            href={item.href}
+                            onClick={closeMenu}
+                          >
+                            {item.label}
+                          </a>
+                        </motion.li>
+                      );
+                    })}
+                  </ul>
+                </nav>
+                <div className="mt-10 flex items-center gap-2 border-t border-[var(--border)] pt-6">
+                  {github ? (
+                    <a
+                      aria-label="GitHub profile (opens in a new tab)"
+                      className={iconLinkClassName}
+                      href={github.href}
+                      rel="noreferrer"
+                      target="_blank"
                     >
-                      <a
-                        aria-current={isActive ? "location" : undefined}
-                        className={`block rounded-md px-4 py-4 text-2xl font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--canvas)] sm:text-3xl ${
-                          isActive
-                            ? "bg-[var(--brand-subtle)] text-[var(--brand-strong)]"
-                            : "text-[var(--text)] hover:bg-[var(--surface-subtle)]"
-                        }`}
-                        href={item.href}
-                        onClick={closeMenu}
-                      >
-                        {item.label}
-                      </a>
-                    </motion.li>
-                  );
-                })}
-              </ul>
-            </nav>
+                      <Github aria-hidden="true" size={18} />
+                    </a>
+                  ) : null}
+                  {linkedin ? (
+                    <a
+                      aria-label="LinkedIn profile (opens in a new tab)"
+                      className={iconLinkClassName}
+                      href={linkedin.href}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      <Linkedin aria-hidden="true" size={18} />
+                    </a>
+                  ) : null}
+                  <a
+                    aria-label="Download resume PDF"
+                    className={iconLinkClassName}
+                    download
+                    href="/documents/resume.pdf"
+                  >
+                    <FileText aria-hidden="true" size={18} />
+                  </a>
+                </div>
+              </div>
+            </Container>
           </motion.div>
         ) : null}
       </AnimatePresence>
